@@ -23,7 +23,7 @@ bool draw_percent(lolo_msgs::PercentStamped& msg, roswasm::Publisher& pub);
 bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub);
 bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pub);
 
-class SamActuatorWidget {
+class LoloActuatorWidget {
 private:
     TopicWidget<lolo_msgs::ThrusterAngles>* thruster_angles;
     TopicWidget<smarc_msgs::ThrusterRPM>* thruster1_rpm;
@@ -45,10 +45,10 @@ private:
 public:
     void pub_callback(const ros::TimerEvent& e);
     void show_window(bool& show_actuator_window);
-    SamActuatorWidget(roswasm::NodeHandle& nh);
+    LoloActuatorWidget(roswasm::NodeHandle& nh);
 };
 
-class SamDashboardWidget {
+class LoloDashboardWidget {
 private:
     bool was_leak;
     TopicBuffer<smarc_msgs::Leak>* leak;
@@ -67,10 +67,10 @@ private:
 public:
     bool is_emergency() { return was_leak; }
     void show_window(bool& show_dashboard_window);
-    SamDashboardWidget(roswasm::NodeHandle& nh);
+    LoloDashboardWidget(roswasm::NodeHandle& nh);
 };
 
-class SamTeleopWidget {
+class LoloTeleopWidget {
 private:
     bool enabled;
     lolo_msgs::ThrusterAngles angles_msg;
@@ -83,7 +83,7 @@ private:
 public:
     void pub_callback(const ros::TimerEvent& e);
     void show_window(bool& show_teleop_window);
-    SamTeleopWidget(roswasm::NodeHandle& nh);
+    LoloTeleopWidget(roswasm::NodeHandle& nh);
 };
 
 } // namespace roswasm_webgui

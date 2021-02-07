@@ -13,7 +13,7 @@ bool draw_ballast_angles(lolo_msgs::BallastAngles& msg, roswasm::Publisher& pub)
         pub.publish(msg);
     }
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputFloat("Angles cmd input", &msg.weight_1_offset_radians, 0.0f, 0.0f, "%.2f");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         msg.weight_2_offset_radians = msg.weight_1_offset_radians;
@@ -33,7 +33,7 @@ bool draw_percent(lolo_msgs::PercentStamped& msg, roswasm::Publisher& pub)
     bool lock = ImGui::IsItemActive();
 
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputFloat("Percent cmd input", &msg.value, 0.0f, 0.0f, "%.2f");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
@@ -52,7 +52,7 @@ bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub)
     bool lock = ImGui::IsItemActive();
 
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputInt("RPM cmd input", &msg.rpm);
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
@@ -66,14 +66,14 @@ bool draw_thruster_rpms(lolo_msgs::ThrusterRPMs& msg, roswasm::Publisher* pub)
 {
     ImGui::PushID("First cmd slider");
     ImGui::Text("Thruster 1");
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::SliderInt("", &msg.thruster_1_rpm, -1000, 1000, "%drpm");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub->publish(msg);
     }
     bool lock = ImGui::IsItemActive();
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputInt("First cmd input", &msg.thruster_1_rpm);
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub->publish(msg);
@@ -81,14 +81,14 @@ bool draw_thruster_rpms(lolo_msgs::ThrusterRPMs& msg, roswasm::Publisher* pub)
 
     ImGui::PushID("Second cmd slider");
     ImGui::Text("Thruster 2");
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::SliderInt("", &msg.thruster_2_rpm, -1000, 1000, "%drpm");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub->publish(msg);
     }
     lock = lock || ImGui::IsItemActive();
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputInt("Second cmd input", &msg.thruster_2_rpm);
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub->publish(msg);
@@ -102,13 +102,13 @@ bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pu
 {
     ImGui::PushID("First cmd slider");
     ImGui::Text("Hori (rad)");
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::SliderFloat("", &msg.thruster_horizontal_radians, -0.1f, 0.18f, "%.2frad");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
     }
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputFloat("First cmd input", &msg.thruster_horizontal_radians, 0.0f, 0.0f, "%.2f");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
@@ -116,13 +116,13 @@ bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pu
 
     ImGui::PushID("Second cmd slider");
     ImGui::Text("Vert (rad)");
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::SliderFloat("", &msg.thruster_vertical_radians, -0.1f, 0.15f, "%.2frad");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
     }
     ImGui::PopID();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::InputFloat("Second cmd input", &msg.thruster_vertical_radians, 0.0f, 0.0f, "%.2f");
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
@@ -131,7 +131,7 @@ bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pu
     return false;
 }
 
-SamActuatorWidget::SamActuatorWidget(roswasm::NodeHandle& nh) : rpm_pub_enabled(false)
+LoloActuatorWidget::LoloActuatorWidget(roswasm::NodeHandle& nh) : rpm_pub_enabled(false)
 {
     //thruster_angles = new TopicPairWidget<geometry_msgs::Pose2D, std_msgs::Float64>(nh, DrawFloatPair("Hori (rad)", -0.1, 0.18, "Vert (rad)", -0.1, 0.15), "core/thrust_vector_cmd", "core/thrust_fb1", "core/thrust_fb2");
     //thruster_rpms = new TopicPairWidget<geometry_msgs::Pose2D, std_msgs::Float64>(nh, DrawFloatPair("Thruster 1", -1000., 1000., "Thruster 2", -1000., 1000.), "core/rpm_cmd", "core/rpm_fb1", "core/rpm_fb2");
@@ -154,11 +154,11 @@ SamActuatorWidget::SamActuatorWidget(roswasm::NodeHandle& nh) : rpm_pub_enabled(
     tcg_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/tcg/pid_enable");
     tcg_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(-1.6, 1.6), "ctrl/tcg/setpoint"); //, -1.6, 1.6)
 
-    pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&SamActuatorWidget::pub_callback, this, std::placeholders::_1));
+    pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&LoloActuatorWidget::pub_callback, this, std::placeholders::_1));
     pub_timer.stop();
 }
 
-void SamActuatorWidget::pub_callback(const ros::TimerEvent& e)
+void LoloActuatorWidget::pub_callback(const ros::TimerEvent& e)
 {
     if (rpm_pub_enabled) {
         rpm1_pub.publish(thruster1_rpm->get_msg());
@@ -166,7 +166,7 @@ void SamActuatorWidget::pub_callback(const ros::TimerEvent& e)
     }
 }
 
-void SamActuatorWidget::show_window(bool& show_actuator_window)
+void LoloActuatorWidget::show_window(bool& show_actuator_window)
 {
     ImGui::Begin("Actuator controls", &show_actuator_window);
 
@@ -179,12 +179,12 @@ void SamActuatorWidget::show_window(bool& show_actuator_window)
         ImGui::PushID("RPMs");
         ImGui::PushID("First");
         ImGui::Text("Thruster 1");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         thruster1_rpm->show_widget();
         ImGui::PopID();
         ImGui::PushID("Second");
         ImGui::Text("Thruster 2");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         thruster2_rpm->show_widget();
         ImGui::PopID();
         ImGui::Checkbox("Publish RPMs at 10hz", &rpm_pub_enabled);
@@ -200,13 +200,13 @@ void SamActuatorWidget::show_window(bool& show_actuator_window)
     if (ImGui::CollapsingHeader("Longitudinal Centre of Gravity (LCG)", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::PushID("LCG");
         ImGui::Text("Pos (%%)");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::PushID("Actuator");
         lcg_actuator->show_widget();
         ImGui::PopID();
         lcg_control_enable->show_widget();
         ImGui::Text("Pitch (rad)");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::PushID("Control");
         lcg_control_setpoint->show_widget();
         ImGui::PopID();
@@ -215,13 +215,13 @@ void SamActuatorWidget::show_window(bool& show_actuator_window)
     if (ImGui::CollapsingHeader("Variable Buoyancy System (VBS)", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::PushID("VBS");
         ImGui::Text("Pos (%%)");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::PushID("Actuator");
         vbs_actuator->show_widget();
         ImGui::PopID();
         vbs_control_enable->show_widget();
         ImGui::Text("Depth (m)");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::PushID("Control");
         vbs_control_setpoint->show_widget();
         ImGui::PopID();
@@ -230,13 +230,13 @@ void SamActuatorWidget::show_window(bool& show_actuator_window)
     if (ImGui::CollapsingHeader("Transversal Centre of Gravity (TCG)", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::PushID("TCG");
         ImGui::Text("Pos (rad)");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::PushID("Actuator");
         tcg_actuator->show_widget();
         ImGui::PopID();
         tcg_control_enable->show_widget();
         ImGui::Text("Roll (rad)");
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::PushID("Control");
         tcg_control_setpoint->show_widget();
         ImGui::PopID();
@@ -246,7 +246,7 @@ void SamActuatorWidget::show_window(bool& show_actuator_window)
     ImGui::End();
 }
 
-SamDashboardWidget::SamDashboardWidget(roswasm::NodeHandle& nh) : was_leak(false)
+LoloDashboardWidget::LoloDashboardWidget(roswasm::NodeHandle& nh) : was_leak(false)
 {
     leak = new TopicBuffer<smarc_msgs::Leak>(nh, "core/leak_fb");
     gps = new TopicBuffer<sensor_msgs::NavSatFix>(nh, "core/gps");
@@ -263,7 +263,7 @@ SamDashboardWidget::SamDashboardWidget(roswasm::NodeHandle& nh) : was_leak(false
     yaw = new TopicBuffer<std_msgs::Float64>(nh, "ctrl/yaw_feedback", 1000);
 }
 
-void SamDashboardWidget::show_window(bool& show_dashboard_window)
+void LoloDashboardWidget::show_window(bool& show_dashboard_window)
 {
     ImGui::Begin("Status dashboard", &show_dashboard_window);
 
@@ -284,42 +284,42 @@ void SamDashboardWidget::show_window(bool& show_dashboard_window)
         ImVec2 p = ImGui::GetCursorScreenPos();
         ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x+sz, p.y+sz), status_color);
         ImGui::Dummy(ImVec2(sz, sz));
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::Text("%s", status_text.c_str());
 
-        ImGui::SameLine(150);
+        ImGui::LoloeLine(150);
         ImGui::Text("Battery: %.0f%%", battery->get_msg().percentage);
     }
 
     if (ImGui::CollapsingHeader("GPS and depth", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("Lat: %.5f", gps->get_msg().latitude);
-        ImGui::SameLine(150);
+        ImGui::LoloeLine(150);
         ImGui::Text("Lon: %.5f", gps->get_msg().longitude);
-        ImGui::SameLine(300);
+        ImGui::LoloeLine(300);
         ImGui::Text("Depth: %.2fm", depth->get_msg().data);
     }
 
     if (ImGui::CollapsingHeader("DR translation", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("X: %.2fm", odom->get_msg().pose.pose.position.x);
-        ImGui::SameLine(150);
+        ImGui::LoloeLine(150);
         ImGui::Text("Y: %.2fm", odom->get_msg().pose.pose.position.y);
-        ImGui::SameLine(300);
+        ImGui::LoloeLine(300);
         ImGui::Text("Z: %.2fm", odom->get_msg().pose.pose.position.z);
     }
 
     if (ImGui::CollapsingHeader("DR rotation", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("Roll: %.2fdeg", 180./M_PI*roll->get_msg().data);
-        ImGui::SameLine(150);
+        ImGui::LoloeLine(150);
         ImGui::Text("Pitch: %.2fdeg", 180./M_PI*pitch->get_msg().data);
-        ImGui::SameLine(300);
+        ImGui::LoloeLine(300);
         ImGui::Text("Yaw: %.2fdeg", 180./M_PI*yaw->get_msg().data);
     }
 
     if (ImGui::CollapsingHeader("Actuator feedback", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("VBS pos: %.2f%%", vbs->get_msg().value);
-        ImGui::SameLine(150);
+        ImGui::LoloeLine(150);
         ImGui::Text("LCG pos: %.2f%%", lcg->get_msg().value);
-        ImGui::SameLine(300);
+        ImGui::LoloeLine(300);
         //ImGui::Text("RPMs: %d, %d rpm", rpms->get_msg().thruster_1_rpm, rpms->get_msg().thruster_2_rpm);
         ImGui::Text("RPMs: %d, %d rpm", rpm1->get_msg().rpm, rpm2->get_msg().rpm);
     }
@@ -327,16 +327,16 @@ void SamDashboardWidget::show_window(bool& show_dashboard_window)
     ImGui::End();
 }
 
-SamTeleopWidget::SamTeleopWidget(roswasm::NodeHandle& nh) : enabled(false) //, pub_timer(nullptr)
+LoloTeleopWidget::LoloTeleopWidget(roswasm::NodeHandle& nh) : enabled(false) //, pub_timer(nullptr)
 {
     angle_pub = nh.advertise<lolo_msgs::ThrusterAngles>("core/thrust_vector_cmd", 1000);
     rpm1_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster1_cmd", 1000);
     rpm2_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster2_cmd", 1000);
-    pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&SamTeleopWidget::pub_callback, this, std::placeholders::_1));
+    pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&LoloTeleopWidget::pub_callback, this, std::placeholders::_1));
     pub_timer.stop();
 }
 
-void SamTeleopWidget::pub_callback(const ros::TimerEvent& e)
+void LoloTeleopWidget::pub_callback(const ros::TimerEvent& e)
 {
     if (enabled) {
         angle_pub.publish(angles_msg);
@@ -345,7 +345,7 @@ void SamTeleopWidget::pub_callback(const ros::TimerEvent& e)
     }
 }
 
-void SamTeleopWidget::show_window(bool& show_teleop_window)
+void LoloTeleopWidget::show_window(bool& show_teleop_window)
 {
     ImGuiIO& io = ImGui::GetIO();
     ImVec4 col = ImGui::GetStyle().Colors[23];
@@ -368,7 +368,7 @@ void SamTeleopWidget::show_window(bool& show_teleop_window)
     }
     ImGui::EndGroup();
 
-    ImGui::SameLine();
+    ImGui::LoloeLine();
 
     ImGui::BeginGroup();
     ImGui::Dummy(ImVec2(sz, 1.5f*sz));
@@ -383,7 +383,7 @@ void SamTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::BeginGroup();
     key_down = enabled && io.KeysDownDuration[265] >= 0.0f;
     if (key_down) {
@@ -406,7 +406,7 @@ void SamTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::BeginGroup();
     ImGui::Dummy(ImVec2(sz, 1.5f*sz));
     key_down = enabled && io.KeysDownDuration[262] >= 0.0f;
@@ -421,14 +421,14 @@ void SamTeleopWidget::show_window(bool& show_teleop_window)
     }
     ImGui::EndGroup();
 
-    ImGui::SameLine();
+    ImGui::LoloeLine();
 
     ImGui::BeginGroup();
     ImGui::Dummy(ImVec2(sz, sz));
     ImGui::Text("Thrust Vector");
     ImGui::EndGroup();
 
-    ImGui::SameLine();
+    ImGui::LoloeLine();
 
     ImGui::BeginGroup();
     key_down = enabled && io.KeysDownDuration[87] >= 0.0f;
@@ -452,7 +452,7 @@ void SamTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
-    ImGui::SameLine();
+    ImGui::LoloeLine();
     ImGui::BeginGroup();
     ImGui::Text("Forward");
     ImGui::Dummy(ImVec2(sz, 0.5f*sz));
@@ -462,7 +462,7 @@ void SamTeleopWidget::show_window(bool& show_teleop_window)
 
     ImGui::End();
 
-    //ImGui::Text("Keys down:");      for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) if (io.KeysDownDuration[i] >= 0.0f)     { ImGui::SameLine(); ImGui::Text("%d (%.02f secs)", i, io.KeysDownDuration[i]); }
+    //ImGui::Text("Keys down:");      for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) if (io.KeysDownDuration[i] >= 0.0f)     { ImGui::LoloeLine(); ImGui::Text("%d (%.02f secs)", i, io.KeysDownDuration[i]); }
 }
 
 

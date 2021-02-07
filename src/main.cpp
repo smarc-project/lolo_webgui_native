@@ -26,9 +26,9 @@
 roswasm::NodeHandle* nh; 
 roswasm_webgui::MonlaunchWidget* monlaunch_widget;
 roswasm_webgui::ImageWidget* image_widget;
-roswasm_webgui::SamActuatorWidget* actuator_widget;
-roswasm_webgui::SamDashboardWidget* dashboard_widget;
-roswasm_webgui::SamTeleopWidget* teleop_widget;
+roswasm_webgui::LoloActuatorWidget* actuator_widget;
+roswasm_webgui::LoloDashboardWidget* dashboard_widget;
+roswasm_webgui::LoloTeleopWidget* teleop_widget;
 
 GLFWwindow* g_window;
 ImVec4 clear_color = ImVec4(0.25f, 0.45f, 0.55f, 1.00f);
@@ -99,7 +99,7 @@ void loop()
         ImVec2 p = ImGui::GetCursorScreenPos();
         ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x+sz, p.y+sz), status_color);
         ImGui::Dummy(ImVec2(sz, sz));
-        ImGui::SameLine();
+        ImGui::LoloeLine();
         ImGui::Text("%s", status_text.c_str());
 
         ImGui::Checkbox("Launch control", &show_monlaunch_window);
@@ -288,9 +288,9 @@ extern "C" int main(int argc, char** argv)
 
     monlaunch_widget = new roswasm_webgui::MonlaunchWidget(*nh);
     image_widget = new roswasm_webgui::ImageWidget(*nh);
-    actuator_widget = new roswasm_webgui::SamActuatorWidget(*nh);
-    dashboard_widget = new roswasm_webgui::SamDashboardWidget(*nh);
-    teleop_widget = new roswasm_webgui::SamTeleopWidget(*nh);
+    actuator_widget = new roswasm_webgui::LoloActuatorWidget(*nh);
+    dashboard_widget = new roswasm_webgui::LoloDashboardWidget(*nh);
+    teleop_widget = new roswasm_webgui::LoloTeleopWidget(*nh);
 
     roswasm::Duration loop_rate(1./20.);
     roswasm::spinLoop(loop, loop_rate);
