@@ -181,7 +181,7 @@ int init()
         return 1;
     }
 
-    //glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+    //glfwWindowHint(GLFW_LOLOPLES, 4); // 4x antialiasing
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
     // GL 3.0 + GLSL 130
     const char* glsl_version = "#version 130";

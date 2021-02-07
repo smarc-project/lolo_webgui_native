@@ -1,5 +1,5 @@
-#ifndef ROSWASM_SAM_H
-#define ROSWASM_SAM_H
+#ifndef ROSWASM_LOLO_H
+#define ROSWASM_LOLO_H
 
 #include <roswasm_webgui/roswasm_widget.h>
 
