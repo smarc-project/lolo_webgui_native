@@ -21,7 +21,7 @@
 #include <roswasm_webgui/roswasm_image.h>
 #include <roswasm_webgui/roswasm_examples.h>
 
-#include <sam_webgui/roswasm_sam.h>
+#include <lolo_webgui/roswasm_lolo.h>
 
 roswasm::NodeHandle* nh; 
 roswasm_webgui::MonlaunchWidget* monlaunch_widget;

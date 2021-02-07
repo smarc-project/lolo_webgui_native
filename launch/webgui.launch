@@ -3,11 +3,11 @@
 <arg name="rosbridge_ip" default="0.0.0.0" />
 <arg name="rosbridge_port" default="9090" />
 <arg name="display_port" default="8080" />
-<arg name="namespace" default="sam"/>
+<arg name="namespace" default="lolo"/>
 
 <include file="$(find roswasm)/launch/run_server.launch">
     <arg name="namespace" value="$(arg namespace)"/>
-    <arg name="pkg" value="sam_webgui"/>
+    <arg name="pkg" value="lolo_webgui"/>
     <arg name="node" value="webgui.html"/>
     <arg name="rosbridge_ip" value="$(arg rosbridge_ip)"/>
     <arg name="rosbridge_port" value="$(arg rosbridge_port)"/>

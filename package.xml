@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>sam_webgui</name>
+  <name>lolo_webgui</name>
   <version>0.1.0</version>
-  <description>The sam_webgui package</description>
+  <description>The lolo_webgui package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -37,7 +37,7 @@
   <build_depend>roscpp</build_depend>
   <!-- <build_depend>roswasm_webgui</build_depend> -->
   <build_depend>std_msgs</build_depend>
-  <build_depend>sam_msgs</build_depend>
+  <build_depend>lolo_msgs</build_depend>
   <build_depend>smarc_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>

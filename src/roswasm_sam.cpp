@@ -1,10 +1,10 @@
-#include <sam_webgui/roswasm_sam.h>
+#include <lolo_webgui/roswasm_lolo.h>
 
 #include <roswasm_webgui/imgui/imgui.h>
 
 namespace roswasm_webgui {
 
-bool draw_ballast_angles(sam_msgs::BallastAngles& msg, roswasm::Publisher& pub)
+bool draw_ballast_angles(lolo_msgs::BallastAngles& msg, roswasm::Publisher& pub)
 {
     ImGui::PushID("Angles cmd slider");
     ImGui::SliderFloat("", &msg.weight_1_offset_radians, -1.6f, 1.6f, "%.2frad");
@@ -23,7 +23,7 @@ bool draw_ballast_angles(sam_msgs::BallastAngles& msg, roswasm::Publisher& pub)
     return false;
 }
 
-bool draw_percent(sam_msgs::PercentStamped& msg, roswasm::Publisher& pub)
+bool draw_percent(lolo_msgs::PercentStamped& msg, roswasm::Publisher& pub)
 {
     ImGui::PushID("Percent cmd slider");
     ImGui::SliderFloat("", &msg.value, 0.0f, 100.0f, "%.2f%%");
@@ -62,7 +62,7 @@ bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub)
 }
 
 /*
-bool draw_thruster_rpms(sam_msgs::ThrusterRPMs& msg, roswasm::Publisher* pub)
+bool draw_thruster_rpms(lolo_msgs::ThrusterRPMs& msg, roswasm::Publisher* pub)
 {
     ImGui::PushID("First cmd slider");
     ImGui::Text("Thruster 1");
@@ -98,7 +98,7 @@ bool draw_thruster_rpms(sam_msgs::ThrusterRPMs& msg, roswasm::Publisher* pub)
 }
 */
 
-bool draw_thruster_angles(sam_msgs::ThrusterAngles& msg, roswasm::Publisher& pub)
+bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pub)
 {
     ImGui::PushID("First cmd slider");
     ImGui::Text("Hori (rad)");
@@ -135,22 +135,22 @@ SamActuatorWidget::SamActuatorWidget(roswasm::NodeHandle& nh) : rpm_pub_enabled(
 {
     //thruster_angles = new TopicPairWidget<geometry_msgs::Pose2D, std_msgs::Float64>(nh, DrawFloatPair("Hori (rad)", -0.1, 0.18, "Vert (rad)", -0.1, 0.15), "core/thrust_vector_cmd", "core/thrust_fb1", "core/thrust_fb2");
     //thruster_rpms = new TopicPairWidget<geometry_msgs::Pose2D, std_msgs::Float64>(nh, DrawFloatPair("Thruster 1", -1000., 1000., "Thruster 2", -1000., 1000.), "core/rpm_cmd", "core/rpm_fb1", "core/rpm_fb2");
-    thruster_angles = new TopicWidget<sam_msgs::ThrusterAngles>(nh, &draw_thruster_angles, "core/thrust_vector_cmd");
-    //thruster_rpms = new TopicWidget<sam_msgs::ThrusterRPMs>(nh, &draw_thruster_rpms, "core/rpm_cmd", "core/rpm_fb");
+    thruster_angles = new TopicWidget<lolo_msgs::ThrusterAngles>(nh, &draw_thruster_angles, "core/thrust_vector_cmd");
+    //thruster_rpms = new TopicWidget<lolo_msgs::ThrusterRPMs>(nh, &draw_thruster_rpms, "core/rpm_cmd", "core/rpm_fb");
     thruster1_rpm = new TopicWidget<smarc_msgs::ThrusterRPM>(nh, &draw_thruster_rpm, "core/thruster1_cmd");
     thruster2_rpm = new TopicWidget<smarc_msgs::ThrusterRPM>(nh, &draw_thruster_rpm, "core/thruster2_cmd");
     rpm1_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster1_cmd", 1000);
     rpm2_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster2_cmd", 1000);
 
-    lcg_actuator = new TopicWidget<sam_msgs::PercentStamped>(nh, &draw_percent, "core/lcg_cmd", "core/lcg_fb");
+    lcg_actuator = new TopicWidget<lolo_msgs::PercentStamped>(nh, &draw_percent, "core/lcg_cmd", "core/lcg_fb");
     lcg_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/lcg/pid_enable");
     lcg_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(-1.6, 1.6), "ctrl/lcg/setpoint"); //, -1.6, 1.6)
 
-    vbs_actuator = new TopicWidget<sam_msgs::PercentStamped>(nh, &draw_percent, "core/vbs_cmd", "core/vbs_fb");
+    vbs_actuator = new TopicWidget<lolo_msgs::PercentStamped>(nh, &draw_percent, "core/vbs_cmd", "core/vbs_fb");
     vbs_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/vbs/pid_enable");
     vbs_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(0., 5.), "ctrl/vbs/setpoint"); //, 0 5)
         
-    tcg_actuator = new TopicWidget<sam_msgs::BallastAngles>(nh, &draw_ballast_angles, "core/tcg_cmd");
+    tcg_actuator = new TopicWidget<lolo_msgs::BallastAngles>(nh, &draw_ballast_angles, "core/tcg_cmd");
     tcg_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/tcg/pid_enable");
     tcg_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(-1.6, 1.6), "ctrl/tcg/setpoint"); //, -1.6, 1.6)
 
@@ -252,9 +252,9 @@ SamDashboardWidget::SamDashboardWidget(roswasm::NodeHandle& nh) : was_leak(false
     gps = new TopicBuffer<sensor_msgs::NavSatFix>(nh, "core/gps");
     battery = new TopicBuffer<sensor_msgs::BatteryState>(nh, "core/battery");
     odom = new TopicBuffer<nav_msgs::Odometry>(nh, "dr/odom", 1000);
-    vbs = new TopicBuffer<sam_msgs::PercentStamped>(nh, "core/vbs_fb", 1000);
-    lcg = new TopicBuffer<sam_msgs::PercentStamped>(nh, "core/lcg_fb", 1000);
-    //rpms = new TopicBuffer<sam_msgs::ThrusterRPMs>(nh, "core/rpm_fb", 1000);
+    vbs = new TopicBuffer<lolo_msgs::PercentStamped>(nh, "core/vbs_fb", 1000);
+    lcg = new TopicBuffer<lolo_msgs::PercentStamped>(nh, "core/lcg_fb", 1000);
+    //rpms = new TopicBuffer<lolo_msgs::ThrusterRPMs>(nh, "core/rpm_fb", 1000);
     rpm1 = new TopicBuffer<smarc_msgs::ThrusterRPM>(nh, "core/thruster1_cmd", 1000);
     rpm2 = new TopicBuffer<smarc_msgs::ThrusterRPM>(nh, "core/thruster2_cmd", 1000);
     depth = new TopicBuffer<std_msgs::Float64>(nh, "ctrl/depth_feedback", 1000);
@@ -329,7 +329,7 @@ void SamDashboardWidget::show_window(bool& show_dashboard_window)
 
 SamTeleopWidget::SamTeleopWidget(roswasm::NodeHandle& nh) : enabled(false) //, pub_timer(nullptr)
 {
-    angle_pub = nh.advertise<sam_msgs::ThrusterAngles>("core/thrust_vector_cmd", 1000);
+    angle_pub = nh.advertise<lolo_msgs::ThrusterAngles>("core/thrust_vector_cmd", 1000);
     rpm1_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster1_cmd", 1000);
     rpm2_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster2_cmd", 1000);
     pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&SamTeleopWidget::pub_callback, this, std::placeholders::_1));

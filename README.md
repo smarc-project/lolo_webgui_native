@@ -1,11 +1,11 @@
-# sam_webgui
-![CI](https://github.com/nilsbore/sam_webgui/workflows/CI/badge.svg?branch=master) [![license](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+# lolo_webgui
+![CI](https://github.com/nilsbore/lolo_webgui/workflows/CI/badge.svg?branch=master) [![license](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Dashboard interface for the SAM AUV based on roswasm_webgui
 
 ## Running the interface
 
-Run using `roslaunch sam_webgui webgui.launch` and navigate to `1.2.3.4:8080` in a browser (preferrably chrome),
+Run using `roslaunch lolo_webgui webgui.launch` and navigate to `1.2.3.4:8080` in a browser (preferrably chrome),
 where `1.2.3.4` should be replaced by the IP of the machine that the interface was launched on.
 
 ## Dependencies for running (on SAM or elsewhere)

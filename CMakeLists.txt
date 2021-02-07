@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(sam_webgui)
+project(lolo_webgui)
 
 option(ROSWASM_NATIVE "Compile with ROS Native version of ROSWASM" OFF)
 
@@ -8,7 +8,7 @@ if (DEFINED ENV{EMSDK} OR ${ROSWASM_NATIVE})
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp roswasm_webgui sam_msgs smarc_msgs std_msgs sensor_msgs geometry_msgs nav_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp roswasm_webgui lolo_msgs smarc_msgs std_msgs sensor_msgs geometry_msgs nav_msgs)
 
 ###################################
 ## catkin specific configuration ##
@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp roswasm_webgui sam_msgs smarc_msg
 
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES sam_webgui
+#  LIBRARIES lolo_webgui
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS roswasm_webgui
 )
@@ -26,7 +26,7 @@ catkin_package(
 ###########
 
 if (${ROSWASM_NATIVE})
-set(SAM_WEBGUI_LIB sam_webgui_native)
+set(SAM_WEBGUI_LIB lolo_webgui_native)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 #set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(GLEW REQUIRED)
@@ -35,7 +35,7 @@ find_package(glfw3 REQUIRED)
 find_package(SDL2 REQUIRED) 
 find_package(SDL2_image REQUIRED)
 else()
-set(SAM_WEBGUI_LIB sam_webgui)
+set(SAM_WEBGUI_LIB lolo_webgui)
 endif()
 
 ## Specify additional locations of header files
@@ -54,18 +54,18 @@ include_directories(
 )
 endif()
 
-#add_library(sam_webgui STATIC src/roswasm_sam.cpp)
-add_library(${SAM_WEBGUI_LIB} src/roswasm_sam.cpp)
-add_executable(sam_webgui_test src/main.cpp)
+#add_library(lolo_webgui STATIC src/roswasm_lolo.cpp)
+add_library(${SAM_WEBGUI_LIB} src/roswasm_lolo.cpp)
+add_executable(lolo_webgui_test src/main.cpp)
 
 if (NOT ${ROSWASM_NATIVE})
-set_target_properties(sam_webgui_test PROPERTIES OUTPUT_NAME "webgui.js")
+set_target_properties(lolo_webgui_test PROPERTIES OUTPUT_NAME "webgui.js")
 configure_file(www/webgui.html ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION}/webgui.html COPYONLY)
 target_link_libraries(${SAM_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
-target_link_libraries(sam_webgui_test ${SAM_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
+target_link_libraries(lolo_webgui_test ${SAM_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
 else()
 target_link_libraries(${SAM_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
-target_link_libraries(sam_webgui_test ${SAM_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
+target_link_libraries(lolo_webgui_test ${SAM_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
 endif()
 
 #############
@@ -85,7 +85,7 @@ endif()
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-install(TARGETS sam_webgui_test
+install(TARGETS lolo_webgui_test
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
