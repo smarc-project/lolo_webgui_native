@@ -26,7 +26,7 @@ catkin_package(
 ###########
 
 if (${ROSWASM_NATIVE})
-set(SAM_WEBGUI_LIB lolo_webgui_native)
+set(LOLO_WEBGUI_LIB lolo_webgui_native)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 #set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(GLEW REQUIRED)
@@ -35,7 +35,7 @@ find_package(glfw3 REQUIRED)
 find_package(SDL2 REQUIRED) 
 find_package(SDL2_image REQUIRED)
 else()
-set(SAM_WEBGUI_LIB lolo_webgui)
+set(LOLO_WEBGUI_LIB lolo_webgui)
 endif()
 
 ## Specify additional locations of header files
@@ -55,17 +55,17 @@ include_directories(
 endif()
 
 #add_library(lolo_webgui STATIC src/roswasm_lolo.cpp)
-add_library(${SAM_WEBGUI_LIB} src/roswasm_lolo.cpp)
+add_library(${LOLO_WEBGUI_LIB} src/roswasm_lolo.cpp)
 add_executable(lolo_webgui_test src/main.cpp)
 
 if (NOT ${ROSWASM_NATIVE})
 set_target_properties(lolo_webgui_test PROPERTIES OUTPUT_NAME "webgui.js")
 configure_file(www/webgui.html ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_BIN_DESTINATION}/webgui.html COPYONLY)
-target_link_libraries(${SAM_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
-target_link_libraries(lolo_webgui_test ${SAM_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
+target_link_libraries(${LOLO_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
+target_link_libraries(lolo_webgui_test ${LOLO_WEBGUI_LIB} ${roswasm_webgui_LIBRARIES} ${roswasm_LIBRARIES})
 else()
-target_link_libraries(${SAM_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
-target_link_libraries(lolo_webgui_test ${SAM_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
+target_link_libraries(${LOLO_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
+target_link_libraries(lolo_webgui_test ${LOLO_WEBGUI_LIB} ${catkin_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARIES} glfw)
 endif()
 
 #############

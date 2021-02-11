@@ -99,7 +99,7 @@ void loop()
         ImVec2 p = ImGui::GetCursorScreenPos();
         ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x+sz, p.y+sz), status_color);
         ImGui::Dummy(ImVec2(sz, sz));
-        ImGui::LoloeLine();
+        ImGui::SameLine();
         ImGui::Text("%s", status_text.c_str());
 
         ImGui::Checkbox("Launch control", &show_monlaunch_window);

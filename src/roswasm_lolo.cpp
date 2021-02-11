@@ -4,44 +4,6 @@
 
 namespace roswasm_webgui {
 
-bool draw_ballast_angles(lolo_msgs::BallastAngles& msg, roswasm::Publisher& pub)
-{
-    ImGui::PushID("Angles cmd slider");
-    ImGui::SliderFloat("", &msg.weight_1_offset_radians, -1.6f, 1.6f, "%.2frad");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        msg.weight_2_offset_radians = msg.weight_1_offset_radians;
-        pub.publish(msg);
-    }
-    ImGui::PopID();
-    ImGui::LoloeLine();
-    ImGui::InputFloat("Angles cmd input", &msg.weight_1_offset_radians, 0.0f, 0.0f, "%.2f");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        msg.weight_2_offset_radians = msg.weight_1_offset_radians;
-        pub.publish(msg);
-    }
-
-    return false;
-}
-
-bool draw_percent(lolo_msgs::PercentStamped& msg, roswasm::Publisher& pub)
-{
-    ImGui::PushID("Percent cmd slider");
-    ImGui::SliderFloat("", &msg.value, 0.0f, 100.0f, "%.2f%%");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub.publish(msg);
-    }
-    bool lock = ImGui::IsItemActive();
-
-    ImGui::PopID();
-    ImGui::LoloeLine();
-    ImGui::InputFloat("Percent cmd input", &msg.value, 0.0f, 0.0f, "%.2f");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub.publish(msg);
-    }
-
-    return lock;
-}
-
 bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub)
 {
     ImGui::PushID("RPM cmd slider");
@@ -52,7 +14,7 @@ bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub)
     bool lock = ImGui::IsItemActive();
 
     ImGui::PopID();
-    ImGui::LoloeLine();
+    ImGui::SameLine();
     ImGui::InputInt("RPM cmd input", &msg.rpm);
     if (ImGui::IsItemDeactivatedAfterChange()) {
         pub.publish(msg);
@@ -61,98 +23,20 @@ bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub)
     return lock;
 }
 
-/*
-bool draw_thruster_rpms(lolo_msgs::ThrusterRPMs& msg, roswasm::Publisher* pub)
-{
-    ImGui::PushID("First cmd slider");
-    ImGui::Text("Thruster 1");
-    ImGui::LoloeLine();
-    ImGui::SliderInt("", &msg.thruster_1_rpm, -1000, 1000, "%drpm");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub->publish(msg);
-    }
-    bool lock = ImGui::IsItemActive();
-    ImGui::PopID();
-    ImGui::LoloeLine();
-    ImGui::InputInt("First cmd input", &msg.thruster_1_rpm);
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub->publish(msg);
-    }
-
-    ImGui::PushID("Second cmd slider");
-    ImGui::Text("Thruster 2");
-    ImGui::LoloeLine();
-    ImGui::SliderInt("", &msg.thruster_2_rpm, -1000, 1000, "%drpm");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub->publish(msg);
-    }
-    lock = lock || ImGui::IsItemActive();
-    ImGui::PopID();
-    ImGui::LoloeLine();
-    ImGui::InputInt("Second cmd input", &msg.thruster_2_rpm);
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub->publish(msg);
-    }
-
-    return lock;
-}
-*/
-
-bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pub)
-{
-    ImGui::PushID("First cmd slider");
-    ImGui::Text("Hori (rad)");
-    ImGui::LoloeLine();
-    ImGui::SliderFloat("", &msg.thruster_horizontal_radians, -0.1f, 0.18f, "%.2frad");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub.publish(msg);
-    }
-    ImGui::PopID();
-    ImGui::LoloeLine();
-    ImGui::InputFloat("First cmd input", &msg.thruster_horizontal_radians, 0.0f, 0.0f, "%.2f");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub.publish(msg);
-    }
-
-    ImGui::PushID("Second cmd slider");
-    ImGui::Text("Vert (rad)");
-    ImGui::LoloeLine();
-    ImGui::SliderFloat("", &msg.thruster_vertical_radians, -0.1f, 0.15f, "%.2frad");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub.publish(msg);
-    }
-    ImGui::PopID();
-    ImGui::LoloeLine();
-    ImGui::InputFloat("Second cmd input", &msg.thruster_vertical_radians, 0.0f, 0.0f, "%.2f");
-    if (ImGui::IsItemDeactivatedAfterChange()) {
-        pub.publish(msg);
-    }
-
-    return false;
-}
-
 LoloActuatorWidget::LoloActuatorWidget(roswasm::NodeHandle& nh) : rpm_pub_enabled(false)
 {
     //thruster_angles = new TopicPairWidget<geometry_msgs::Pose2D, std_msgs::Float64>(nh, DrawFloatPair("Hori (rad)", -0.1, 0.18, "Vert (rad)", -0.1, 0.15), "core/thrust_vector_cmd", "core/thrust_fb1", "core/thrust_fb2");
     //thruster_rpms = new TopicPairWidget<geometry_msgs::Pose2D, std_msgs::Float64>(nh, DrawFloatPair("Thruster 1", -1000., 1000., "Thruster 2", -1000., 1000.), "core/rpm_cmd", "core/rpm_fb1", "core/rpm_fb2");
-    thruster_angles = new TopicWidget<lolo_msgs::ThrusterAngles>(nh, &draw_thruster_angles, "core/thrust_vector_cmd");
+    //thruster_angles = new TopicWidget<lolo_msgs::ThrusterAngles>(nh, &draw_thruster_angles, "core/thrust_vector_cmd");
+    rudder_angles = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/rudder_cmd");
+    elevator_angle = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/elevator_cmd");
+    elevon_port_angle = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/elevon_port_cmd");
+    elevon_stbd_angle = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/elevon_strb_cmd");
     //thruster_rpms = new TopicWidget<lolo_msgs::ThrusterRPMs>(nh, &draw_thruster_rpms, "core/rpm_cmd", "core/rpm_fb");
     thruster1_rpm = new TopicWidget<smarc_msgs::ThrusterRPM>(nh, &draw_thruster_rpm, "core/thruster1_cmd");
     thruster2_rpm = new TopicWidget<smarc_msgs::ThrusterRPM>(nh, &draw_thruster_rpm, "core/thruster2_cmd");
     rpm1_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster1_cmd", 1000);
     rpm2_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster2_cmd", 1000);
-
-    lcg_actuator = new TopicWidget<lolo_msgs::PercentStamped>(nh, &draw_percent, "core/lcg_cmd", "core/lcg_fb");
-    lcg_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/lcg/pid_enable");
-    lcg_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(-1.6, 1.6), "ctrl/lcg/setpoint"); //, -1.6, 1.6)
-
-    vbs_actuator = new TopicWidget<lolo_msgs::PercentStamped>(nh, &draw_percent, "core/vbs_cmd", "core/vbs_fb");
-    vbs_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/vbs/pid_enable");
-    vbs_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(0., 5.), "ctrl/vbs/setpoint"); //, 0 5)
-        
-    tcg_actuator = new TopicWidget<lolo_msgs::BallastAngles>(nh, &draw_ballast_angles, "core/tcg_cmd");
-    tcg_control_enable = new TopicWidget<std_msgs::Bool>(nh, &draw_bool, "ctrl/tcg/pid_enable");
-    tcg_control_setpoint = new TopicWidget<std_msgs::Float64>(nh, DrawFloat64(-1.6, 1.6), "ctrl/tcg/setpoint"); //, -1.6, 1.6)
 
     pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&LoloActuatorWidget::pub_callback, this, std::placeholders::_1));
     pub_timer.stop();
@@ -170,21 +54,40 @@ void LoloActuatorWidget::show_window(bool& show_actuator_window)
 {
     ImGui::Begin("Actuator controls", &show_actuator_window);
 
-    if (ImGui::CollapsingHeader("Thruster Angles", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::PushID("Angles");
-        thruster_angles->show_widget();
+    if (ImGui::CollapsingHeader("Rudder Angles", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::PushID("RPMs");
+        ImGui::PushID("First");
+        ImGui::Text("Rudders");
+        ImGui::SameLine();
+        rudder_angles->show_widget();
+        ImGui::PopID();
+        ImGui::PushID("Second");
+        ImGui::Text("Elevator");
+        ImGui::SameLine();
+        elevator_angle->show_widget();
+        ImGui::PopID();
+        ImGui::PushID("Third");
+        ImGui::Text("Port Elevon");
+        ImGui::SameLine();
+        elevon_port_angle->show_widget();
+        ImGui::PopID();
+        ImGui::PushID("Fourth");
+        ImGui::Text("Starboard Elevon");
+        ImGui::SameLine();
+        elevon_stbd_angle->show_widget();
+        ImGui::PopID();
         ImGui::PopID();
     }
     if (ImGui::CollapsingHeader("Thruster RPMs", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::PushID("RPMs");
         ImGui::PushID("First");
         ImGui::Text("Thruster 1");
-        ImGui::LoloeLine();
+        ImGui::SameLine();
         thruster1_rpm->show_widget();
         ImGui::PopID();
         ImGui::PushID("Second");
         ImGui::Text("Thruster 2");
-        ImGui::LoloeLine();
+        ImGui::SameLine();
         thruster2_rpm->show_widget();
         ImGui::PopID();
         ImGui::Checkbox("Publish RPMs at 10hz", &rpm_pub_enabled);
@@ -197,52 +100,6 @@ void LoloActuatorWidget::show_window(bool& show_actuator_window)
         }
     }
 
-    if (ImGui::CollapsingHeader("Longitudinal Centre of Gravity (LCG)", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::PushID("LCG");
-        ImGui::Text("Pos (%%)");
-        ImGui::LoloeLine();
-        ImGui::PushID("Actuator");
-        lcg_actuator->show_widget();
-        ImGui::PopID();
-        lcg_control_enable->show_widget();
-        ImGui::Text("Pitch (rad)");
-        ImGui::LoloeLine();
-        ImGui::PushID("Control");
-        lcg_control_setpoint->show_widget();
-        ImGui::PopID();
-        ImGui::PopID();
-    }
-    if (ImGui::CollapsingHeader("Variable Buoyancy System (VBS)", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::PushID("VBS");
-        ImGui::Text("Pos (%%)");
-        ImGui::LoloeLine();
-        ImGui::PushID("Actuator");
-        vbs_actuator->show_widget();
-        ImGui::PopID();
-        vbs_control_enable->show_widget();
-        ImGui::Text("Depth (m)");
-        ImGui::LoloeLine();
-        ImGui::PushID("Control");
-        vbs_control_setpoint->show_widget();
-        ImGui::PopID();
-        ImGui::PopID();
-    }
-    if (ImGui::CollapsingHeader("Transversal Centre of Gravity (TCG)", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::PushID("TCG");
-        ImGui::Text("Pos (rad)");
-        ImGui::LoloeLine();
-        ImGui::PushID("Actuator");
-        tcg_actuator->show_widget();
-        ImGui::PopID();
-        tcg_control_enable->show_widget();
-        ImGui::Text("Roll (rad)");
-        ImGui::LoloeLine();
-        ImGui::PushID("Control");
-        tcg_control_setpoint->show_widget();
-        ImGui::PopID();
-        ImGui::PopID();
-    }
-
     ImGui::End();
 }
 
@@ -252,8 +109,6 @@ LoloDashboardWidget::LoloDashboardWidget(roswasm::NodeHandle& nh) : was_leak(fal
     gps = new TopicBuffer<sensor_msgs::NavSatFix>(nh, "core/gps");
     battery = new TopicBuffer<sensor_msgs::BatteryState>(nh, "core/battery");
     odom = new TopicBuffer<nav_msgs::Odometry>(nh, "dr/odom", 1000);
-    vbs = new TopicBuffer<lolo_msgs::PercentStamped>(nh, "core/vbs_fb", 1000);
-    lcg = new TopicBuffer<lolo_msgs::PercentStamped>(nh, "core/lcg_fb", 1000);
     //rpms = new TopicBuffer<lolo_msgs::ThrusterRPMs>(nh, "core/rpm_fb", 1000);
     rpm1 = new TopicBuffer<smarc_msgs::ThrusterRPM>(nh, "core/thruster1_cmd", 1000);
     rpm2 = new TopicBuffer<smarc_msgs::ThrusterRPM>(nh, "core/thruster2_cmd", 1000);
@@ -284,43 +139,38 @@ void LoloDashboardWidget::show_window(bool& show_dashboard_window)
         ImVec2 p = ImGui::GetCursorScreenPos();
         ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x+sz, p.y+sz), status_color);
         ImGui::Dummy(ImVec2(sz, sz));
-        ImGui::LoloeLine();
+        ImGui::SameLine();
         ImGui::Text("%s", status_text.c_str());
 
-        ImGui::LoloeLine(150);
+        ImGui::SameLine(150);
         ImGui::Text("Battery: %.0f%%", battery->get_msg().percentage);
     }
 
     if (ImGui::CollapsingHeader("GPS and depth", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("Lat: %.5f", gps->get_msg().latitude);
-        ImGui::LoloeLine(150);
+        ImGui::SameLine(150);
         ImGui::Text("Lon: %.5f", gps->get_msg().longitude);
-        ImGui::LoloeLine(300);
+        ImGui::SameLine(300);
         ImGui::Text("Depth: %.2fm", depth->get_msg().data);
     }
 
     if (ImGui::CollapsingHeader("DR translation", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("X: %.2fm", odom->get_msg().pose.pose.position.x);
-        ImGui::LoloeLine(150);
+        ImGui::SameLine(150);
         ImGui::Text("Y: %.2fm", odom->get_msg().pose.pose.position.y);
-        ImGui::LoloeLine(300);
+        ImGui::SameLine(300);
         ImGui::Text("Z: %.2fm", odom->get_msg().pose.pose.position.z);
     }
 
     if (ImGui::CollapsingHeader("DR rotation", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Text("Roll: %.2fdeg", 180./M_PI*roll->get_msg().data);
-        ImGui::LoloeLine(150);
+        ImGui::SameLine(150);
         ImGui::Text("Pitch: %.2fdeg", 180./M_PI*pitch->get_msg().data);
-        ImGui::LoloeLine(300);
+        ImGui::SameLine(300);
         ImGui::Text("Yaw: %.2fdeg", 180./M_PI*yaw->get_msg().data);
     }
 
     if (ImGui::CollapsingHeader("Actuator feedback", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Text("VBS pos: %.2f%%", vbs->get_msg().value);
-        ImGui::LoloeLine(150);
-        ImGui::Text("LCG pos: %.2f%%", lcg->get_msg().value);
-        ImGui::LoloeLine(300);
-        //ImGui::Text("RPMs: %d, %d rpm", rpms->get_msg().thruster_1_rpm, rpms->get_msg().thruster_2_rpm);
         ImGui::Text("RPMs: %d, %d rpm", rpm1->get_msg().rpm, rpm2->get_msg().rpm);
     }
 
@@ -329,7 +179,10 @@ void LoloDashboardWidget::show_window(bool& show_dashboard_window)
 
 LoloTeleopWidget::LoloTeleopWidget(roswasm::NodeHandle& nh) : enabled(false) //, pub_timer(nullptr)
 {
-    angle_pub = nh.advertise<lolo_msgs::ThrusterAngles>("core/thrust_vector_cmd", 1000);
+    rudder_pub = nh.advertise<std_msgs::Float32>("core/rudder_cmd", 1000);
+    elevator_pub = nh.advertise<std_msgs::Float32>("core/elevator_cmd", 1000);
+    elevon_port_pub = nh.advertise<std_msgs::Float32>("core/elevon_port_cmd", 1000);
+    elevon_stbd_pub = nh.advertise<std_msgs::Float32>("core/elevon_strb_cmd", 1000);
     rpm1_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster1_cmd", 1000);
     rpm2_pub = nh.advertise<smarc_msgs::ThrusterRPM>("core/thruster2_cmd", 1000);
     pub_timer = nh.createTimer(roswasm::Duration(0.08), std::bind(&LoloTeleopWidget::pub_callback, this, std::placeholders::_1));
@@ -339,9 +192,15 @@ LoloTeleopWidget::LoloTeleopWidget(roswasm::NodeHandle& nh) : enabled(false) //,
 void LoloTeleopWidget::pub_callback(const ros::TimerEvent& e)
 {
     if (enabled) {
-        angle_pub.publish(angles_msg);
+        //angle_pub.publish(angles_msg);
+        elevon_port_pub.publish(elevon_msg);
+        elevon_msg.data *= -1.;
+        elevon_stbd_pub.publish(elevon_msg);
+        elevator_pub.publish(elevon_msg);
+        elevon_msg.data *= -1.;
         rpm1_pub.publish(rpm1_msg);
         rpm2_pub.publish(rpm2_msg);
+        rudder_pub.publish(rudder_msg);
     }
 }
 
@@ -353,7 +212,7 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
     ImGui::SetNextWindowSize(ImVec2(472, 80), ImGuiCond_FirstUseEver);
     ImGui::Begin("Keyboard teleop", &show_teleop_window);
 
-    angles_msg.thruster_vertical_radians = angles_msg.thruster_horizontal_radians = rpm1_msg.rpm = rpm2_msg.rpm = 0.0f;
+    rudder_msg.data = elevon_msg.data = rpm1_msg.rpm = rpm2_msg.rpm = 0.0f;
 
     float sz = ImGui::GetTextLineHeight();
     ImGui::BeginGroup();
@@ -368,7 +227,7 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
     }
     ImGui::EndGroup();
 
-    ImGui::LoloeLine();
+    ImGui::SameLine();
 
     ImGui::BeginGroup();
     ImGui::Dummy(ImVec2(sz, 1.5f*sz));
@@ -377,20 +236,22 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PushStyleColor(ImGuiCol_Button, col);
     }
     if (ImGui::ArrowButton("##left", ImGuiDir_Left) || key_down) {
-        angles_msg.thruster_horizontal_radians = -0.10;
+        //angles_msg.thruster_horizontal_radians = -0.10;
+        rudder_msg.data = -0.6;
     }
     if (key_down) {
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
-    ImGui::LoloeLine();
+    ImGui::SameLine();
     ImGui::BeginGroup();
     key_down = enabled && io.KeysDownDuration[265] >= 0.0f;
     if (key_down) {
         ImGui::PushStyleColor(ImGuiCol_Button, col);
     }
     if (ImGui::ArrowButton("##up", ImGuiDir_Up) || key_down) {
-        angles_msg.thruster_vertical_radians = 0.10;
+        //angles_msg.thruster_vertical_radians = 0.10;
+        elevon_msg.data = -0.6;
     }
     if (key_down) {
         ImGui::PopStyleColor();   
@@ -400,13 +261,14 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PushStyleColor(ImGuiCol_Button, col);
     }
     if (ImGui::ArrowButton("##down", ImGuiDir_Down) || key_down) {
-        angles_msg.thruster_vertical_radians = -0.10;
+        //angles_msg.thruster_vertical_radians = -0.10;
+        elevon_msg.data = 0.6;
     }
     if (key_down) {
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
-    ImGui::LoloeLine();
+    ImGui::SameLine();
     ImGui::BeginGroup();
     ImGui::Dummy(ImVec2(sz, 1.5f*sz));
     key_down = enabled && io.KeysDownDuration[262] >= 0.0f;
@@ -414,21 +276,22 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PushStyleColor(ImGuiCol_Button, col);
     }
     if (ImGui::ArrowButton("##right", ImGuiDir_Right) || key_down) {
-        angles_msg.thruster_horizontal_radians = 0.10;
+        //angles_msg.thruster_horizontal_radians = 0.10;
+        rudder_msg.data = 0.6;
     }
     if (key_down) {
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
 
-    ImGui::LoloeLine();
+    ImGui::SameLine();
 
     ImGui::BeginGroup();
     ImGui::Dummy(ImVec2(sz, sz));
     ImGui::Text("Thrust Vector");
     ImGui::EndGroup();
 
-    ImGui::LoloeLine();
+    ImGui::SameLine();
 
     ImGui::BeginGroup();
     key_down = enabled && io.KeysDownDuration[87] >= 0.0f;
@@ -452,7 +315,7 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
         ImGui::PopStyleColor();   
     }
     ImGui::EndGroup();
-    ImGui::LoloeLine();
+    ImGui::SameLine();
     ImGui::BeginGroup();
     ImGui::Text("Forward");
     ImGui::Dummy(ImVec2(sz, 0.5f*sz));
@@ -462,7 +325,7 @@ void LoloTeleopWidget::show_window(bool& show_teleop_window)
 
     ImGui::End();
 
-    //ImGui::Text("Keys down:");      for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) if (io.KeysDownDuration[i] >= 0.0f)     { ImGui::LoloeLine(); ImGui::Text("%d (%.02f secs)", i, io.KeysDownDuration[i]); }
+    //ImGui::Text("Keys down:");      for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) if (io.KeysDownDuration[i] >= 0.0f)     { ImGui::SameLine(); ImGui::Text("%d (%.02f secs)", i, io.KeysDownDuration[i]); }
 }
 
 

@@ -6,42 +6,34 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <sensor_msgs/BatteryState.h>
 #include <nav_msgs/Odometry.h>
+#include <std_msgs/Float32.h>
 
-#include <lolo_msgs/PercentStamped.h>
 //#include <lolo_msgs/ThrusterRPMs.h>
-#include <lolo_msgs/ThrusterAngles.h>
-#include <lolo_msgs/BallastAngles.h>
 //#include <lolo_msgs/Leak.h>
 #include <smarc_msgs/Leak.h>
 #include <smarc_msgs/ThrusterRPM.h>
 
 namespace roswasm_webgui {
 
-bool draw_ballast_angles(lolo_msgs::BallastAngles& msg, roswasm::Publisher& pub);
-bool draw_percent(lolo_msgs::PercentStamped& msg, roswasm::Publisher& pub);
+//bool draw_ballast_angles(lolo_msgs::BallastAngles& msg, roswasm::Publisher& pub);
+//bool draw_percent(lolo_msgs::PercentStamped& msg, roswasm::Publisher& pub);
 //bool draw_thruster_rpms(lolo_msgs::ThrusterRPMs& msg, roswasm::Publisher& pub);
 bool draw_thruster_rpm(smarc_msgs::ThrusterRPM& msg, roswasm::Publisher& pub);
-bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pub);
+//bool draw_thruster_angles(lolo_msgs::ThrusterAngles& msg, roswasm::Publisher& pub);
 
 class LoloActuatorWidget {
 private:
-    TopicWidget<lolo_msgs::ThrusterAngles>* thruster_angles;
+    //TopicWidget<lolo_msgs::ThrusterAngles>* thruster_angles;
+    TopicWidget<std_msgs::Float32>* rudder_angles;
+    TopicWidget<std_msgs::Float32>* elevator_angle;
+    TopicWidget<std_msgs::Float32>* elevon_port_angle;
+    TopicWidget<std_msgs::Float32>* elevon_stbd_angle;
     TopicWidget<smarc_msgs::ThrusterRPM>* thruster1_rpm;
     TopicWidget<smarc_msgs::ThrusterRPM>* thruster2_rpm;
     roswasm::Publisher rpm1_pub;
     roswasm::Publisher rpm2_pub;
     roswasm::Timer pub_timer;
     bool rpm_pub_enabled;
-    TopicWidget<lolo_msgs::PercentStamped>* lcg_actuator;
-    TopicWidget<std_msgs::Bool>* lcg_control_enable;
-    TopicWidget<std_msgs::Float64>* lcg_control_setpoint;
-    TopicWidget<lolo_msgs::PercentStamped>* vbs_actuator;
-    TopicWidget<std_msgs::Bool>* vbs_control_enable;
-    TopicWidget<std_msgs::Float64>* vbs_control_setpoint;
-    TopicWidget<lolo_msgs::BallastAngles>* tcg_actuator;
-    TopicWidget<std_msgs::Bool>* tcg_control_enable;
-    TopicWidget<std_msgs::Float64>* tcg_control_setpoint;
-
 public:
     void pub_callback(const ros::TimerEvent& e);
     void show_window(bool& show_actuator_window);
@@ -55,8 +47,6 @@ private:
     TopicBuffer<sensor_msgs::NavSatFix>* gps;
     TopicBuffer<sensor_msgs::BatteryState>* battery;
     TopicBuffer<nav_msgs::Odometry>* odom;
-    TopicBuffer<lolo_msgs::PercentStamped>* vbs;
-    TopicBuffer<lolo_msgs::PercentStamped>* lcg;
     //TopicBuffer<lolo_msgs::ThrusterRPMs>* rpms;
     TopicBuffer<smarc_msgs::ThrusterRPM>* rpm1;
     TopicBuffer<smarc_msgs::ThrusterRPM>* rpm2;
@@ -73,12 +63,17 @@ public:
 class LoloTeleopWidget {
 private:
     bool enabled;
-    lolo_msgs::ThrusterAngles angles_msg;
+    //lolo_msgs::ThrusterAngles angles_msg;
+    std_msgs::Float32 rudder_msg;
+    std_msgs::Float32 elevon_msg;
     smarc_msgs::ThrusterRPM rpm1_msg;
     smarc_msgs::ThrusterRPM rpm2_msg;
     roswasm::Publisher rpm1_pub;
     roswasm::Publisher rpm2_pub;
-    roswasm::Publisher angle_pub;
+    roswasm::Publisher rudder_pub;
+    roswasm::Publisher elevator_pub;
+    roswasm::Publisher elevon_port_pub;
+    roswasm::Publisher elevon_stbd_pub;
     roswasm::Timer pub_timer;
 public:
     void pub_callback(const ros::TimerEvent& e);
