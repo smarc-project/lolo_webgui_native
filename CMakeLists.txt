@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(lolo_webgui)
+project(lolo_webgui_native)
 
 option(ROSWASM_NATIVE "Compile with ROS Native version of ROSWASM" OFF)
 
@@ -8,7 +8,7 @@ if (DEFINED ENV{EMSDK} OR ${ROSWASM_NATIVE})
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp roswasm_webgui lolo_msgs smarc_msgs std_msgs sensor_msgs geometry_msgs nav_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp roswasm_webgui_native lolo_msgs smarc_msgs std_msgs sensor_msgs geometry_msgs nav_msgs)
 
 ###################################
 ## catkin specific configuration ##
