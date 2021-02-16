@@ -32,6 +32,12 @@ LoloActuatorWidget::LoloActuatorWidget(roswasm::NodeHandle& nh) : rpm_pub_enable
     elevator_angle = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/elevator_cmd");
     elevon_port_angle = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/elevon_port_cmd");
     elevon_stbd_angle = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(-.6, .6), "core/elevon_strb_cmd");
+
+    vbs_front_port = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(0., 100.), "core/vbs_front_port_cmd", "core/vbs_front_port_fb");
+    vbs_front_stbd = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(0., 100.), "core/vbs_front_stbd_cmd", "core/vbs_front_stbd_fb");
+    vbs_back_port = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(0., 100.), "core/vbs_back_port_cmd", "core/vbs_back_port_fb");
+    vbs_back_stbd = new TopicWidget<std_msgs::Float32>(nh, DrawFloat32(0., 100.), "core/vbs_back_stbd_cmd", "core/vbs_back_stbd_fb");
+
     //thruster_rpms = new TopicWidget<lolo_msgs::ThrusterRPMs>(nh, &draw_thruster_rpms, "core/rpm_cmd", "core/rpm_fb");
     thruster1_rpm = new TopicWidget<smarc_msgs::ThrusterRPM>(nh, &draw_thruster_rpm, "core/thruster1_cmd");
     thruster2_rpm = new TopicWidget<smarc_msgs::ThrusterRPM>(nh, &draw_thruster_rpm, "core/thruster2_cmd");
@@ -98,6 +104,30 @@ void LoloActuatorWidget::show_window(bool& show_actuator_window)
         else { //if (!rpm_pub_enabled && pub_timer != nullptr) {
             pub_timer.stop();
         }
+    }
+    if (ImGui::CollapsingHeader("VBS", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::PushID("VBS");
+        ImGui::PushID("First");
+        ImGui::Text("Front port");
+        ImGui::SameLine();
+        vbs_front_port->show_widget();
+        ImGui::PopID();
+        ImGui::PushID("Second");
+        ImGui::Text("Front starboard");
+        ImGui::SameLine();
+        vbs_front_stbd->show_widget();
+        ImGui::PopID();
+        ImGui::PushID("Third");
+        ImGui::Text("Back port");
+        ImGui::SameLine();
+        vbs_back_port->show_widget();
+        ImGui::PopID();
+        ImGui::PushID("Fourth");
+        ImGui::Text("Back starboard");
+        ImGui::SameLine();
+        vbs_back_stbd->show_widget();
+        ImGui::PopID();
+        ImGui::PopID();
     }
 
     ImGui::End();
