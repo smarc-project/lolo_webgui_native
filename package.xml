@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>lolo_webgui</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>The lolo_webgui package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
@@ -47,6 +47,9 @@
   <build_depend>roswasm_webgui</build_depend>
   <!-- <build_depend>rosmon_msgs</build_depend> -->
   <exec_depend>roscpp</exec_depend>
+  <exec_depend>lolo_msgs</exec_depend>
+  <exec_depend>smarc_msgs</exec_depend>
+  <exec_depend>rosmon_msgs</exec_depend>
   <exec_depend>roswasm</exec_depend>
   <exec_depend>roswasm_webgui</exec_depend>
   <exec_depend>rosbridge_server</exec_depend>
