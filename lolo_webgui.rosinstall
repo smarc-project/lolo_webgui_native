@@ -1,4 +1,4 @@
-- git: {local-name: sam_webgui, uri: 'https://github.com/smarc-project/lolo_webgui.git', version: master}
-- git: {local-name: sam_common, uri: 'https://github.com/smarc-project/lolo_common.git', version: noetic-devel}
+- git: {local-name: lolo_webgui, uri: 'https://github.com/smarc-project/lolo_webgui.git', version: master}
+- git: {local-name: lolo_common, uri: 'https://github.com/smarc-project/lolo_common.git', version: noetic-devel}
 - git: {local-name: smarc_msgs, uri: 'https://github.com/smarc-project/smarc_msgs.git', version: noetic-devel}
 - git: {local-name: roswasm_suite_native, uri: 'https://github.com/smarc-project-native-gui/roswasm_suite_native.git', version: master}

@@ -28,6 +28,10 @@ private:
     TopicWidget<std_msgs::Float32>* elevator_angle;
     TopicWidget<std_msgs::Float32>* elevon_port_angle;
     TopicWidget<std_msgs::Float32>* elevon_stbd_angle;
+    TopicWidget<std_msgs::Float32>* vbs_front_port;
+    TopicWidget<std_msgs::Float32>* vbs_front_stbd;
+    TopicWidget<std_msgs::Float32>* vbs_back_port;
+    TopicWidget<std_msgs::Float32>* vbs_back_stbd;
     TopicWidget<smarc_msgs::ThrusterRPM>* thruster1_rpm;
     TopicWidget<smarc_msgs::ThrusterRPM>* thruster2_rpm;
     roswasm::Publisher rpm1_pub;
