@@ -1,8 +1,9 @@
 <launch>
 
 <arg name="namespace" default="lolo"/>
+<arg name="with_rosapi" default="true"/>
 
 <node pkg="lolo_webgui_native" type="lolo_webgui_test" name="lolo_webgui_node" output="screen" ns="$(arg namespace)"/>
-<node pkg="rosapi" type="rosapi_node" name="rosapi_node" output="screen"/>
+<node pkg="rosapi" type="rosapi_node" name="rosapi_node" output="screen" if="$(arg with_rosapi)"/>
 
 </launch>
