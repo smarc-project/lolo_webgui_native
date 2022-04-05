@@ -2,8 +2,8 @@
 Changelog for package lolo_webgui_native
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.3 (2022-04-05)
+------------------
 * Bumped package version
 * Merge pull request `#2 <https://github.com/smarc-project-native-gui/lolo_webgui_native/issues/2>`_ from smarc-project-native-gui/merge_upstream
   Merge upstream
