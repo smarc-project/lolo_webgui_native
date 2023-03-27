@@ -142,10 +142,10 @@ LoloDashboardWidget::LoloDashboardWidget(roswasm::NodeHandle& nh) : was_leak(fal
     //rpms = new TopicBuffer<lolo_msgs::ThrusterRPMs>(nh, "core/rpm_fb", 1000);
     rpm1 = new TopicBuffer<smarc_msgs::ThrusterRPM>(nh, "core/thruster1_cmd", 1000);
     rpm2 = new TopicBuffer<smarc_msgs::ThrusterRPM>(nh, "core/thruster2_cmd", 1000);
-    depth = new TopicBuffer<std_msgs::Float64>(nh, "ctrl/depth_feedback", 1000);
-    pitch = new TopicBuffer<std_msgs::Float64>(nh, "ctrl/pitch_feedback", 1000);
-    roll = new TopicBuffer<std_msgs::Float64>(nh, "ctrl/roll_feedback", 1000);
-    yaw = new TopicBuffer<std_msgs::Float64>(nh, "ctrl/yaw_feedback", 1000);
+    depth = new TopicBuffer<std_msgs::Float64>(nh, "dr/depth", 1000);
+    pitch = new TopicBuffer<std_msgs::Float64>(nh, "dr/pitch", 1000);
+    roll = new TopicBuffer<std_msgs::Float64>(nh, "dr/roll", 1000);
+    yaw = new TopicBuffer<std_msgs::Float64>(nh, "dr/yaw", 1000);
 }
 
 void LoloDashboardWidget::show_window(bool& show_dashboard_window)
