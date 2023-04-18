@@ -20,12 +20,14 @@ where `1.2.3.4` should be replaced by the IP of the machine that the interface w
 
 ## Dependencies when developing
 
-* [Emscripten](https://emscripten.org/docs/getting_started/downloads.html) tested with version `1.39.10` but latest should do
+* [Emscripten](https://emscripten.org/docs/getting_started/downloads.html) tested with version `1.39.10` .
 * [roswasm_suite](https://github.com/nilsbore/roswasm_suite): clone in catkin workspace with `git clone https://github.com/nilsbore/roswasm_suite.git`
-* [rosbridge_suite](https://github.com/RobotWebTools/rosbridge_suite) after [the commit adding cbor-raw compression](https://github.com/RobotWebTools/rosbridge_suite/commit/dc7fcb282d1326d573abe83579cc7d989ae71739), latest `develop` should do:
+* [rosbridge_suite](https://github.com/RobotWebTools/rosbridge_suite) after [the commit adding cbor-raw compression](https://github.com/RobotWebTools/rosbridge_suite/commit/dc7fcb282d1326d573abe83579cc7d989ae71739), should get the `ros1` branch:
   ```bash
-  git clone https://github.com/RobotWebTools/rosbridge_suite -b develop # in workspace src folder
+  git clone https://github.com/RobotWebTools/rosbridge_suite -b ros1
   ```
+* Also requires `libglfw3-dev` package from apt to be installed.
+* And `libsdl2-image-dev`.
 
 ## Building when developing
 
